@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+  <title>Melaka Town Cafe - Login / Signup</title>
   <meta charset="UTF-8">
-  <title>Melaka Town Cafe - Login & Signup</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
     }
-
     .container {
       max-width: 400px;
-      margin: 30px auto;
+      margin: 40px auto;
+      background: #fff;
       padding: 25px;
-      border: 1px solid #e0e0e0;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      background-color: white;
       text-align: center;
     }
-
     h1 {
       color: #4285f4;
     }
-
     label {
+      font-weight: bold;
       display: block;
       margin-bottom: 5px;
-      font-weight: bold;
+      text-align: left;
     }
-
-    input[type="email"],
-    input[type="password"],
-    input[type="text"] {
+    input {
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
@@ -40,126 +36,102 @@
       border-radius: 5px;
       font-size: 16px;
     }
-
     button {
       width: 100%;
       padding: 12px;
-      color: white;
+      font-size: 16px;
       border: none;
       border-radius: 5px;
-      font-size: 16px;
+      color: white;
       cursor: pointer;
     }
-
-    .login-btn {
+    .btn-login {
       background-color: #4285f4;
     }
-
-    .signup-btn {
+    .btn-signup {
       background-color: #34a853;
     }
-
-    a {
+    .link {
+      margin-top: 15px;
+      display: block;
       color: #4285f4;
       text-decoration: none;
-      font-weight: bold;
     }
-
-    .link {
-      margin-top: 20px;
-      color: #666;
-    }
-
-    #signupSection {
-      display: none;
-    }
-
-    .status {
-      margin-bottom: 20px;
+    #statusMessage {
       color: #555;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
-
-  <!-- LOGIN SECTION -->
-  <div class="container" id="loginSection">
+  <div class="container" id="loginContainer">
     <h1>Welcome To Melaka Town Cafe!</h1>
-    <p id="loginMessage" class="status">Please log in to continue.</p>
-
+    <p id="statusMessage">Please log in to continue.</p>
     <form>
       <label>Email</label>
       <input type="email" id="loginEmail" placeholder="Enter your email" required>
-
       <label>Password</label>
       <input type="password" id="loginPassword" placeholder="Enter your password" required>
-
-      <button type="button" class="login-btn" onclick="handleLogin()">Log In</button>
+      <button type="button" class="btn-login" onclick="handleLogin()">Log In</button>
     </form>
-
-    <div class="link">
-      Don't have an account? <a href="#" onclick="toggleForms('signup')">Click to sign up</a>
-    </div>
+    <a href="#" class="link" onclick="toggleForm('signup')">Don't have an account? Sign up</a>
   </div>
 
-  <!-- SIGNUP SECTION -->
-  <div class="container" id="signupSection">
-    <h1>Create an Account</h1>
-    <p id="signupMessage" class="status">Join us today!</p>
-
+  <div class="container" id="signupContainer" style="display:none;">
+    <h1>Create Account</h1>
+    <p id="signupStatus">Join us today!</p>
     <form>
       <label>Full Name</label>
       <input type="text" id="signupName" placeholder="Your name" required>
-
       <label>Email</label>
       <input type="email" id="signupEmail" placeholder="Enter email" required>
-
       <label>Password</label>
       <input type="password" id="signupPassword" placeholder="Create password" required>
-
-      <button type="button" class="signup-btn" onclick="handleSignup()">Sign Up</button>
-
-      <div class="link">
-        <a href="#" onclick="toggleForms('login')">Back to login</a>
-      </div>
+      <button type="button" class="btn-signup" onclick="handleSignup()">Sign Up</button>
     </form>
+    <a href="#" class="link" onclick="toggleForm('login')">Back to login</a>
   </div>
 
   <script>
-    // 🔗 Your Google Apps Script Web App URL
-    const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // <-- Replace this
+    const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
-    function toggleForms(form) {
-      document.getElementById('loginSection').style.display = form === 'login' ? 'block' : 'none';
-      document.getElementById('signupSection').style.display = form === 'signup' ? 'block' : 'none';
+    function toggleForm(form) {
+      document.getElementById("loginContainer").style.display = form === 'login' ? 'block' : 'none';
+      document.getElementById("signupContainer").style.display = form === 'signup' ? 'block' : 'none';
     }
 
     async function handleLogin() {
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
+      const message = document.getElementById("statusMessage");
+
+      if (!email || !password) {
+        message.textContent = "Please enter email and password.";
+        message.style.color = "red";
+        return;
+      }
 
       try {
         const response = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+          body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&action=login`
         });
-
         const result = await response.json();
 
         if (result.success) {
-          document.getElementById("loginMessage").textContent = `Welcome, ${result.name}!`;
-          document.getElementById("loginMessage").style.color = "green";
+          message.textContent = `Welcome, ${result.name}! Redirecting...`;
+          message.style.color = "green";
           setTimeout(() => {
-            window.location.href = "https://sites.google.com/your-site/members"; // Replace with your member page
-          }, 1500);
+            window.location.href = "https://sites.google.com/view/melakatowncafe/log-in"; // Change to your destination
+          }, 2000);
         } else {
-          document.getElementById("loginMessage").textContent = result.error;
-          document.getElementById("loginMessage").style.color = "red";
+          message.textContent = result.error || "Login failed.";
+          message.style.color = "red";
         }
-      } catch (error) {
-        document.getElementById("loginMessage").textContent = "Network error. Try again.";
-        document.getElementById("loginMessage").style.color = "red";
+      } catch (err) {
+        message.textContent = "Network error. Please try again.";
+        message.style.color = "red";
       }
     }
 
@@ -167,10 +139,11 @@
       const name = document.getElementById("signupName").value;
       const email = document.getElementById("signupEmail").value;
       const password = document.getElementById("signupPassword").value;
+      const status = document.getElementById("signupStatus");
 
       if (!name || !email || !password) {
-        document.getElementById("signupMessage").textContent = "Please fill all fields.";
-        document.getElementById("signupMessage").style.color = "red";
+        status.textContent = "Please fill in all fields.";
+        status.style.color = "red";
         return;
       }
 
@@ -180,20 +153,21 @@
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&action=signup`
         });
-
         const result = await response.json();
 
         if (result.success) {
-          document.getElementById("signupMessage").textContent = "Signup successful! Redirecting...";
-          document.getElementById("signupMessage").style.color = "green";
-          setTimeout(() => toggleForms('login'), 2000);
+          status.textContent = "Signup successful! Redirecting to login...";
+          status.style.color = "green";
+          setTimeout(() => {
+            toggleForm('login');
+          }, 2000);
         } else {
-          document.getElementById("signupMessage").textContent = result.error || "Signup failed";
-          document.getElementById("signupMessage").style.color = "red";
+          status.textContent = result.error || "Signup failed.";
+          status.style.color = "red";
         }
-      } catch (error) {
-        document.getElementById("signupMessage").textContent = "Network error. Try again.";
-        document.getElementById("signupMessage").style.color = "red";
+      } catch (err) {
+        status.textContent = "Network error. Please try again.";
+        status.style.color = "red";
       }
     }
   </script>
