@@ -2,68 +2,206 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login / Signup</title>
   <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-hover: #3a56d4;
+      --secondary-color: #f72585;
+      --text-color: #2b2d42;
+      --light-gray: #f8f9fa;
+      --border-color: #dee2e6;
+      --success-color: #4bb543;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      line-height: 1.6;
+      background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
+    
     .container {
-      max-width: 400px;
-      margin: 40px auto;
+      width: 100%;
+      max-width: 420px;
       background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-      text-align: center;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
     }
+    
+    .container:hover {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .input-group {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+    
     input {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      padding: 12px 15px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background-color: #f8f9fa;
     }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      background-color: #fff;
+    }
+    
+    input::placeholder {
+      color: #adb5bd;
+    }
+    
     button {
       width: 100%;
-      padding: 12px;
-      background: #4285f4;
+      padding: 14px;
+      background: var(--primary-color);
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       color: white;
-      font-size: 16px;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
     }
-    a {
-      color: #4285f4;
+    
+    button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .toggle-text {
+      margin-top: 1.5rem;
+      text-align: center;
+      color: #6c757d;
+    }
+    
+    .toggle-link {
+      color: var(--primary-color);
       cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s;
     }
+    
+    .toggle-link:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
+    
     #message {
-      margin-top: 15px;
-      color: red;
+      margin-top: 1.2rem;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.9rem;
+      display: none;
+    }
+    
+    .error {
+      background-color: #fff5f5;
+      color: #dc3545;
+      border: 1px solid #f8d7da;
+      display: block;
+    }
+    
+    .success {
+      background-color: #f0fff4;
+      color: var(--success-color);
+      border: 1px solid #d4edda;
+      display: block;
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
 
 <div class="container" id="loginContainer">
-  <h2>Login</h2>
-  <input type="email" id="loginEmail" placeholder="Email" required>
-  <input type="password" id="loginPassword" placeholder="Password" required>
+  <h2>Welcome Back</h2>
+  <div class="input-group">
+    <input type="email" id="loginEmail" placeholder="Email" required>
+  </div>
+  <div class="input-group password-container">
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <span class="password-toggle" onclick="togglePassword('loginPassword')">👁️</span>
+  </div>
   <button onclick="handleLogin()">Log In</button>
-  <p>Don't have an account? <a onclick="showSignup()">Sign up</a></p>
-  <div id="message"></div>
+  <p class="toggle-text">Don't have an account? <a class="toggle-link" onclick="showSignup()">Sign up</a></p>
+  <div id="loginMessage"></div>
 </div>
 
 <div class="container" id="signupContainer" style="display: none;">
-  <h2>Sign Up</h2>
-  <input type="text" id="signupName" placeholder="Full Name" required>
-  <input type="email" id="signupEmail" placeholder="Email" required>
-  <input type="password" id="signupPassword" placeholder="Password" required>
+  <h2>Create Account</h2>
+  <div class="input-group">
+    <input type="text" id="signupName" placeholder="Full Name" required>
+  </div>
+  <div class="input-group">
+    <input type="email" id="signupEmail" placeholder="Email" required>
+  </div>
+  <div class="input-group password-container">
+    <input type="password" id="signupPassword" placeholder="Password" required>
+    <span class="password-toggle" onclick="togglePassword('signupPassword')">👁️</span>
+  </div>
   <button onclick="handleSignup()">Sign Up</button>
-  <p>Already have an account? <a onclick="showLogin()">Login</a></p>
-  <div id="message"></div>
+  <p class="toggle-text">Already have an account? <a class="toggle-link" onclick="showLogin()">Login</a></p>
+  <div id="signupMessage"></div>
 </div>
 
 <script>
@@ -72,19 +210,40 @@
   function showSignup() {
     document.getElementById("loginContainer").style.display = "none";
     document.getElementById("signupContainer").style.display = "block";
-    document.getElementById("message").textContent = "";
+    clearMessages();
   }
 
   function showLogin() {
     document.getElementById("signupContainer").style.display = "none";
     document.getElementById("loginContainer").style.display = "block";
-    document.getElementById("message").textContent = "";
+    clearMessages();
+  }
+
+  function clearMessages() {
+    document.getElementById("loginMessage").textContent = "";
+    document.getElementById("loginMessage").style.display = "none";
+    document.getElementById("signupMessage").textContent = "";
+    document.getElementById("signupMessage").style.display = "none";
+  }
+
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
   }
 
   async function handleSignup() {
-    const name = document.getElementById("signupName").value;
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value.trim();
+    const messageEl = document.getElementById("signupMessage");
+
+    // Simple validation
+    if (!name || !email || !password) {
+      messageEl.textContent = "Please fill in all fields";
+      messageEl.className = "error";
+      messageEl.style.display = "block";
+      return;
+    }
 
     try {
       const response = await fetch(API_URL, {
@@ -95,22 +254,39 @@
 
       const result = await response.json();
       if (result.success) {
-        document.getElementById("message").style.color = "green";
-        document.getElementById("message").textContent = "You have created an account successfully!";
-        showLogin();
+        messageEl.textContent = "Account created successfully! Redirecting to login...";
+        messageEl.className = "success";
+        messageEl.style.display = "block";
+        
+        // Clear form and show login after 2 seconds
+        document.getElementById("signupName").value = "";
+        document.getElementById("signupEmail").value = "";
+        document.getElementById("signupPassword").value = "";
+        
+        setTimeout(showLogin, 2000);
       } else {
-        document.getElementById("message").style.color = "red";
-        document.getElementById("message").textContent = result.error || "Signup failed";
+        messageEl.textContent = result.error || "Signup failed. Please try again.";
+        messageEl.className = "error";
+        messageEl.style.display = "block";
       }
     } catch (error) {
-      document.getElementById("message").style.color = "red";
-      document.getElementById("message").textContent = "Network error. Please try again.";
+      messageEl.textContent = "Network error. Please check your connection and try again.";
+      messageEl.className = "error";
+      messageEl.style.display = "block";
     }
   }
 
   async function handleLogin() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const messageEl = document.getElementById("loginMessage");
+
+    if (!email || !password) {
+      messageEl.textContent = "Please enter both email and password";
+      messageEl.className = "error";
+      messageEl.style.display = "block";
+      return;
+    }
 
     try {
       const response = await fetch(API_URL, {
@@ -121,15 +297,23 @@
 
       const result = await response.json();
       if (result.success) {
-        // Redirect to menu.html after successful login
-        window.location.href = "menu.html";
+        messageEl.textContent = "Login successful! Redirecting...";
+        messageEl.className = "success";
+        messageEl.style.display = "block";
+        
+        // Redirect to menu.html after 1.5 seconds
+        setTimeout(() => {
+          window.location.href = "menu.html";
+        }, 1500);
       } else {
-        document.getElementById("message").style.color = "red";
-        document.getElementById("message").textContent = result.error || "Invalid email or password";
+        messageEl.textContent = result.error || "Invalid email or password";
+        messageEl.className = "error";
+        messageEl.style.display = "block";
       }
     } catch (error) {
-      document.getElementById("message").style.color = "red";
-      document.getElementById("message").textContent = "Network error. Please try again.";
+      messageEl.textContent = "Network error. Please try again.";
+      messageEl.className = "error";
+      messageEl.style.display = "block";
     }
   }
 </script>
