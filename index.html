@@ -1,101 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login & Signup</title>
+  <meta charset="UTF-8">
+  <title>Login / Signup</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f8f8f8;
-      padding: 20px;
+      background-color: #f4f4f4;
     }
     .container {
       max-width: 400px;
-      margin: auto;
-      background: white;
-      padding: 30px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
       text-align: center;
     }
-    input, button {
+    input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
       font-size: 16px;
     }
-    .hidden { display: none; }
-    a { color: #4285f4; cursor: pointer; }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4285f4;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    a {
+      color: #4285f4;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 15px;
+      color: red;
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2 id="formTitle">Log In</h2>
+<div class="container" id="loginContainer">
+  <h2>Login</h2>
+  <input type="email" id="loginEmail" placeholder="Email" required>
+  <input type="password" id="loginPassword" placeholder="Password" required>
+  <button onclick="handleLogin()">Log In</button>
+  <p>Don't have an account? <a onclick="showSignup()">Sign up</a></p>
+  <div id="message"></div>
+</div>
 
-  <!-- Login Form -->
-  <div id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Email" required />
-    <input type="password" id="loginPassword" placeholder="Password" required />
-    <button onclick="handleLogin()">Log In</button>
-    <p>Don't have an account? <a onclick="toggleForms()">Sign up</a></p>
-  </div>
-
-  <!-- Signup Form -->
-  <div id="signupForm" class="hidden">
-    <input type="text" id="signupName" placeholder="Full Name" required />
-    <input type="email" id="signupEmail" placeholder="Email" required />
-    <input type="password" id="signupPassword" placeholder="Password" required />
-    <button onclick="handleSignup()">Sign Up</button>
-    <p>Already have an account? <a onclick="toggleForms()">Log in</a></p>
-  </div>
-
-  <p id="message" style="color:red;"></p>
+<div class="container" id="signupContainer" style="display: none;">
+  <h2>Sign Up</h2>
+  <input type="text" id="signupName" placeholder="Full Name" required>
+  <input type="email" id="signupEmail" placeholder="Email" required>
+  <input type="password" id="signupPassword" placeholder="Password" required>
+  <button onclick="handleSignup()">Sign Up</button>
+  <p>Already have an account? <a onclick="showLogin()">Login</a></p>
+  <div id="message"></div>
 </div>
 
 <script>
-  function toggleForms() {
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-    const title = document.getElementById("formTitle");
-    if (loginForm.classList.contains("hidden")) {
-      loginForm.classList.remove("hidden");
-      signupForm.classList.add("hidden");
-      title.textContent = "Log In";
-    } else {
-      loginForm.classList.add("hidden");
-      signupForm.classList.remove("hidden");
-      title.textContent = "Sign Up";
-    }
+  const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // Replace with your Apps Script URL
+
+  function showSignup() {
+    document.getElementById("loginContainer").style.display = "none";
+    document.getElementById("signupContainer").style.display = "block";
     document.getElementById("message").textContent = "";
   }
 
-  function handleLogin() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    // Replace this with your actual logic or API
-    if (email === "test@example.com" && password === "123456") {
-      document.getElementById("message").style.color = "green";
-      document.getElementById("message").textContent = "Login successful!";
-    } else {
-      document.getElementById("message").style.color = "red";
-      document.getElementById("message").textContent = "Invalid email or password!";
-    }
+  function showLogin() {
+    document.getElementById("signupContainer").style.display = "none";
+    document.getElementById("loginContainer").style.display = "block";
+    document.getElementById("message").textContent = "";
   }
 
-  function handleSignup() {
+  async function handleSignup() {
     const name = document.getElementById("signupName").value;
     const email = document.getElementById("signupEmail").value;
     const password = document.getElementById("signupPassword").value;
-    // You can connect this to a backend or Google Sheets API
-    if (name && email && password) {
-      document.getElementById("message").style.color = "green";
-      document.getElementById("message").textContent = "Signup successful. You can log in now!";
-      toggleForms();
-    } else {
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `action=signup&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        document.getElementById("message").style.color = "green";
+        document.getElementById("message").textContent = "You have created an account successfully!";
+        showLogin();
+      } else {
+        document.getElementById("message").style.color = "red";
+        document.getElementById("message").textContent = result.error || "Signup failed";
+      }
+    } catch (error) {
       document.getElementById("message").style.color = "red";
-      document.getElementById("message").textContent = "Please fill all fields!";
+      document.getElementById("message").textContent = "Network error. Please try again.";
+    }
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Redirect to menu.html after successful login
+        window.location.href = "menu.html";
+      } else {
+        document.getElementById("message").style.color = "red";
+        document.getElementById("message").textContent = result.error || "Invalid email or password";
+      }
+    } catch (error) {
+      document.getElementById("message").style.color = "red";
+      document.getElementById("message").textContent = "Network error. Please try again.";
     }
   }
 </script>
