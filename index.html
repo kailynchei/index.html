@@ -205,7 +205,10 @@
 </div>
 
 <script>
+  // For demo purposes, we'll use localStorage to store user data
+  // In a real app, you would use your API_URL to communicate with a backend
   const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // Replace with your Apps Script URL
+  const DEMO_MODE = true; // Set to false when using real backend
 
   function showSignup() {
     document.getElementById("loginContainer").style.display = "none";
@@ -231,6 +234,29 @@
     input.type = input.type === 'password' ? 'text' : 'password';
   }
 
+  // Store user data in localStorage for demo purposes
+  function storeUserData(name, email, password) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    // Check if user already exists
+    if (users.some(user => user.email === email)) {
+      return { success: false, error: "Email already registered" };
+    }
+    
+    const newUser = { name, email, password };
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    return { success: true };
+  }
+
+  // Verify user credentials from localStorage for demo purposes
+  function verifyUserCredentials(email, password) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find(u => u.email === email && u.password === password);
+    return user 
+      ? { success: true, user }
+      : { success: false, error: "Invalid email or password" };
+  }
+
   async function handleSignup() {
     const name = document.getElementById("signupName").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
@@ -239,40 +265,54 @@
 
     // Simple validation
     if (!name || !email || !password) {
-      messageEl.textContent = "Please fill in all fields";
-      messageEl.className = "error";
-      messageEl.style.display = "block";
+      showMessage(messageEl, "Please fill in all fields", "error");
       return;
     }
 
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `action=signup&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-      });
-
-      const result = await response.json();
+    if (DEMO_MODE) {
+      // Demo mode using localStorage
+      const result = storeUserData(name, email, password);
       if (result.success) {
-        messageEl.textContent = "Account created successfully! Redirecting to login...";
-        messageEl.className = "success";
-        messageEl.style.display = "block";
-        
-        // Clear form and show login after 2 seconds
+        showMessage(messageEl, "Registration successful! You can now login.", "success");
+        // Auto-fill the login form with the new credentials
+        document.getElementById("loginEmail").value = email;
+        document.getElementById("loginPassword").value = password;
+        // Clear signup form
         document.getElementById("signupName").value = "";
         document.getElementById("signupEmail").value = "";
         document.getElementById("signupPassword").value = "";
-        
+        // Show login after 2 seconds
         setTimeout(showLogin, 2000);
       } else {
-        messageEl.textContent = result.error || "Signup failed. Please try again.";
-        messageEl.className = "error";
-        messageEl.style.display = "block";
+        showMessage(messageEl, result.error || "Signup failed. Please try again.", "error");
       }
-    } catch (error) {
-      messageEl.textContent = "Network error. Please check your connection and try again.";
-      messageEl.className = "error";
-      messageEl.style.display = "block";
+    } else {
+      // Real API mode
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `action=signup&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showMessage(messageEl, "Registration successful! You can now login.", "success");
+          // Auto-fill the login form with the new credentials
+          document.getElementById("loginEmail").value = email;
+          document.getElementById("loginPassword").value = password;
+          // Clear signup form
+          document.getElementById("signupName").value = "";
+          document.getElementById("signupEmail").value = "";
+          document.getElementById("signupPassword").value = "";
+          // Show login after 2 seconds
+          setTimeout(showLogin, 2000);
+        } else {
+          showMessage(messageEl, result.error || "Signup failed. Please try again.", "error");
+        }
+      } catch (error) {
+        showMessage(messageEl, "Network error. Please check your connection and try again.", "error");
+      }
     }
   }
 
@@ -282,39 +322,61 @@
     const messageEl = document.getElementById("loginMessage");
 
     if (!email || !password) {
-      messageEl.textContent = "Please enter both email and password";
-      messageEl.className = "error";
-      messageEl.style.display = "block";
+      showMessage(messageEl, "Please enter both email and password", "error");
       return;
     }
 
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-      });
-
-      const result = await response.json();
+    if (DEMO_MODE) {
+      // Demo mode using localStorage
+      const result = verifyUserCredentials(email, password);
       if (result.success) {
-        messageEl.textContent = "Login successful! Redirecting...";
-        messageEl.className = "success";
-        messageEl.style.display = "block";
-        
+        showMessage(messageEl, "Login successful! Redirecting...", "success");
+        // Store current user in session
+        sessionStorage.setItem('currentUser', JSON.stringify(result.user));
         // Redirect to menu.html after 1.5 seconds
         setTimeout(() => {
           window.location.href = "menu.html";
         }, 1500);
       } else {
-        messageEl.textContent = result.error || "Invalid email or password";
-        messageEl.className = "error";
-        messageEl.style.display = "block";
+        showMessage(messageEl, result.error || "Invalid email or password", "error");
       }
-    } catch (error) {
-      messageEl.textContent = "Network error. Please try again.";
-      messageEl.className = "error";
-      messageEl.style.display = "block";
+    } else {
+      // Real API mode
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showMessage(messageEl, "Login successful! Redirecting...", "success");
+          // Store current user in session
+          sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+          // Redirect to menu.html after 1.5 seconds
+          setTimeout(() => {
+            window.location.href = "menu.html";
+          }, 1500);
+        } else {
+          showMessage(messageEl, result.error || "Invalid email or password", "error");
+        }
+      } catch (error) {
+        showMessage(messageEl, "Network error. Please try again.", "error");
+      }
     }
+  }
+
+  function showMessage(element, message, type) {
+    element.textContent = message;
+    element.className = type;
+    element.style.display = "block";
+  }
+
+  // For demo purposes - clear any existing demo data when page loads
+  if (DEMO_MODE && !localStorage.getItem('demoInitialized')) {
+    localStorage.removeItem('users');
+    localStorage.setItem('demoInitialized', 'true');
   }
 </script>
 
