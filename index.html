@@ -1,175 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Melaka Town Cafe - Login / Signup</title>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Signup</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
+      background: #f8f8f8;
+      padding: 20px;
     }
     .container {
       max-width: 400px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px;
+      margin: auto;
+      background: white;
+      padding: 30px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       text-align: center;
     }
-    h1 {
-      color: #4285f4;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
-      text-align: left;
-    }
-    input {
+    input, button {
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      margin: 10px 0;
       font-size: 16px;
     }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-    }
-    .btn-login {
-      background-color: #4285f4;
-    }
-    .btn-signup {
-      background-color: #34a853;
-    }
-    .link {
-      margin-top: 15px;
-      display: block;
-      color: #4285f4;
-      text-decoration: none;
-    }
-    #statusMessage {
-      color: #555;
-      margin-bottom: 15px;
-    }
+    .hidden { display: none; }
+    a { color: #4285f4; cursor: pointer; }
   </style>
 </head>
 <body>
-  <div class="container" id="loginContainer">
-    <h1>Welcome To Melaka Town Cafe!</h1>
-    <p id="statusMessage">Please log in to continue.</p>
-    <form>
-      <label>Email</label>
-      <input type="email" id="loginEmail" placeholder="Enter your email" required>
-      <label>Password</label>
-      <input type="password" id="loginPassword" placeholder="Enter your password" required>
-      <button type="button" class="btn-login" onclick="handleLogin()">Log In</button>
-    </form>
-    <a href="#" class="link" onclick="toggleForm('signup')">Don't have an account? Sign up</a>
+
+<div class="container">
+  <h2 id="formTitle">Log In</h2>
+
+  <!-- Login Form -->
+  <div id="loginForm">
+    <input type="email" id="loginEmail" placeholder="Email" required />
+    <input type="password" id="loginPassword" placeholder="Password" required />
+    <button onclick="handleLogin()">Log In</button>
+    <p>Don't have an account? <a onclick="toggleForms()">Sign up</a></p>
   </div>
 
-  <div class="container" id="signupContainer" style="display:none;">
-    <h1>Create Account</h1>
-    <p id="signupStatus">Join us today!</p>
-    <form>
-      <label>Full Name</label>
-      <input type="text" id="signupName" placeholder="Your name" required>
-      <label>Email</label>
-      <input type="email" id="signupEmail" placeholder="Enter email" required>
-      <label>Password</label>
-      <input type="password" id="signupPassword" placeholder="Create password" required>
-      <button type="button" class="btn-signup" onclick="handleSignup()">Sign Up</button>
-    </form>
-    <a href="#" class="link" onclick="toggleForm('login')">Back to login</a>
+  <!-- Signup Form -->
+  <div id="signupForm" class="hidden">
+    <input type="text" id="signupName" placeholder="Full Name" required />
+    <input type="email" id="signupEmail" placeholder="Email" required />
+    <input type="password" id="signupPassword" placeholder="Password" required />
+    <button onclick="handleSignup()">Sign Up</button>
+    <p>Already have an account? <a onclick="toggleForms()">Log in</a></p>
   </div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+  <p id="message" style="color:red;"></p>
+</div>
 
-    function toggleForm(form) {
-      document.getElementById("loginContainer").style.display = form === 'login' ? 'block' : 'none';
-      document.getElementById("signupContainer").style.display = form === 'signup' ? 'block' : 'none';
+<script>
+  function toggleForms() {
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const title = document.getElementById("formTitle");
+    if (loginForm.classList.contains("hidden")) {
+      loginForm.classList.remove("hidden");
+      signupForm.classList.add("hidden");
+      title.textContent = "Log In";
+    } else {
+      loginForm.classList.add("hidden");
+      signupForm.classList.remove("hidden");
+      title.textContent = "Sign Up";
     }
+    document.getElementById("message").textContent = "";
+  }
 
-    async function handleLogin() {
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-      const message = document.getElementById("statusMessage");
-
-      if (!email || !password) {
-        message.textContent = "Please enter email and password.";
-        message.style.color = "red";
-        return;
-      }
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&action=login`
-        });
-        const result = await response.json();
-
-        if (result.success) {
-          message.textContent = `Welcome, ${result.name}! Redirecting...`;
-          message.style.color = "green";
-          setTimeout(() => {
-            window.location.href = "https://sites.google.com/view/melakatowncafe/log-in"; // Change to your destination
-          }, 2000);
-        } else {
-          message.textContent = result.error || "Login failed.";
-          message.style.color = "red";
-        }
-      } catch (err) {
-        message.textContent = "Network error. Please try again.";
-        message.style.color = "red";
-      }
+  function handleLogin() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    // Replace this with your actual logic or API
+    if (email === "test@example.com" && password === "123456") {
+      document.getElementById("message").style.color = "green";
+      document.getElementById("message").textContent = "Login successful!";
+    } else {
+      document.getElementById("message").style.color = "red";
+      document.getElementById("message").textContent = "Invalid email or password!";
     }
+  }
 
-    async function handleSignup() {
-      const name = document.getElementById("signupName").value;
-      const email = document.getElementById("signupEmail").value;
-      const password = document.getElementById("signupPassword").value;
-      const status = document.getElementById("signupStatus");
-
-      if (!name || !email || !password) {
-        status.textContent = "Please fill in all fields.";
-        status.style.color = "red";
-        return;
-      }
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&action=signup`
-        });
-        const result = await response.json();
-
-        if (result.success) {
-          status.textContent = "Signup successful! Redirecting to login...";
-          status.style.color = "green";
-          setTimeout(() => {
-            toggleForm('login');
-          }, 2000);
-        } else {
-          status.textContent = result.error || "Signup failed.";
-          status.style.color = "red";
-        }
-      } catch (err) {
-        status.textContent = "Network error. Please try again.";
-        status.style.color = "red";
-      }
+  function handleSignup() {
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+    // You can connect this to a backend or Google Sheets API
+    if (name && email && password) {
+      document.getElementById("message").style.color = "green";
+      document.getElementById("message").textContent = "Signup successful. You can log in now!";
+      toggleForms();
+    } else {
+      document.getElementById("message").style.color = "red";
+      document.getElementById("message").textContent = "Please fill all fields!";
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
