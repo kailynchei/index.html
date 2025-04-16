@@ -23,144 +23,37 @@
     
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--light-gray);
       color: var(--text-color);
       line-height: 1.6;
-      background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      /* Background with 58% transparency */
+      background: 
+        linear-gradient(rgba(255,255,255,0.42), rgba(255,255,255,0.42)),
+        url('https://cdn.uniacco.com/blog/wp-content/uploads/2021/02/19060507/andy-falconer-dwQRixazu9I-unsplash-min.jpg') center/cover no-repeat fixed;
     }
     
     .container {
       width: 100%;
       max-width: 420px;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.92); /* Slightly transparent white */
       padding: 2.5rem;
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       transition: all 0.3s ease;
+      backdrop-filter: blur(3px); /* Subtle blur effect */
     }
     
-    .container:hover {
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    }
-    
-    h2 {
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-      font-size: 1.8rem;
-      text-align: center;
-      font-weight: 600;
-    }
-    
-    .input-group {
-      margin-bottom: 1.2rem;
-      position: relative;
-    }
-    
-    input {
-      width: 100%;
-      padding: 12px 15px;
-      border: 2px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: all 0.3s;
-      background-color: #f8f9fa;
-    }
-    
-    input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-      background-color: #fff;
-    }
-    
-    input::placeholder {
-      color: #adb5bd;
-    }
-    
-    button {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary-color);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 0.5rem;
-    }
-    
-    button:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-    }
-    
-    button:active {
-      transform: translateY(0);
-    }
-    
-    .toggle-text {
-      margin-top: 1.5rem;
-      text-align: center;
-      color: #6c757d;
-    }
-    
-    .toggle-link {
-      color: var(--primary-color);
-      cursor: pointer;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    
-    .toggle-link:hover {
-      color: var(--secondary-color);
-      text-decoration: underline;
-    }
-    
-    #message {
-      margin-top: 1.2rem;
-      padding: 10px 15px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 0.9rem;
-      display: none;
-    }
-    
-    .error {
-      background-color: #fff5f5;
-      color: #dc3545;
-      border: 1px solid #f8d7da;
-      display: block;
-    }
-    
-    .success {
-      background-color: #f0fff4;
-      color: var(--success-color);
-      border: 1px solid #d4edda;
-      display: block;
-    }
-    
-    .password-container {
-      position: relative;
-    }
-    
-    .password-toggle {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #6c757d;
-    }
+    /* [Keep all other CSS rules exactly the same] */
     
     @media (max-width: 480px) {
+      body {
+        background-attachment: scroll; /* Better mobile performance */
+      }
+      
       .container {
         padding: 1.5rem;
       }
@@ -173,212 +66,7 @@
 </head>
 <body>
 
-<div class="container" id="loginContainer">
-  <h2>Welcome Back</h2>
-  <div class="input-group">
-    <input type="email" id="loginEmail" placeholder="Email" required>
-  </div>
-  <div class="input-group password-container">
-    <input type="password" id="loginPassword" placeholder="Password" required>
-    <span class="password-toggle" onclick="togglePassword('loginPassword')">👁️</span>
-  </div>
-  <button onclick="handleLogin()">Log In</button>
-  <p class="toggle-text">Don't have an account? <a class="toggle-link" onclick="showSignup()">Sign up</a></p>
-  <div id="loginMessage"></div>
-</div>
-
-<div class="container" id="signupContainer" style="display: none;">
-  <h2>Create Account</h2>
-  <div class="input-group">
-    <input type="text" id="signupName" placeholder="Full Name" required>
-  </div>
-  <div class="input-group">
-    <input type="email" id="signupEmail" placeholder="Email" required>
-  </div>
-  <div class="input-group password-container">
-    <input type="password" id="signupPassword" placeholder="Password" required>
-    <span class="password-toggle" onclick="togglePassword('signupPassword')">👁️</span>
-  </div>
-  <button onclick="handleSignup()">Sign Up</button>
-  <p class="toggle-text">Already have an account? <a class="toggle-link" onclick="showLogin()">Login</a></p>
-  <div id="signupMessage"></div>
-</div>
-
-<script>
-  // For demo purposes, we'll use localStorage to store user data
-  // In a real app, you would use your API_URL to communicate with a backend
-  const API_URL = "https://script.google.com/macros/s/AKfycbwiQ9g3iHqgk6DpryjTZ8tn2sEZZcW1mEbTaE6o0mX8_QyQ4eyBtiw66DbpXs8pKp4J8A/exec"; // Replace with your Apps Script URL
-  const DEMO_MODE = true; // Set to false when using real backend
-
-  function showSignup() {
-    document.getElementById("loginContainer").style.display = "none";
-    document.getElementById("signupContainer").style.display = "block";
-    clearMessages();
-  }
-
-  function showLogin() {
-    document.getElementById("signupContainer").style.display = "none";
-    document.getElementById("loginContainer").style.display = "block";
-    clearMessages();
-  }
-
-  function clearMessages() {
-    document.getElementById("loginMessage").textContent = "";
-    document.getElementById("loginMessage").style.display = "none";
-    document.getElementById("signupMessage").textContent = "";
-    document.getElementById("signupMessage").style.display = "none";
-  }
-
-  function togglePassword(id) {
-    const input = document.getElementById(id);
-    input.type = input.type === 'password' ? 'text' : 'password';
-  }
-
-  // Store user data in localStorage for demo purposes
-  function storeUserData(name, email, password) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    // Check if user already exists
-    if (users.some(user => user.email === email)) {
-      return { success: false, error: "Email already registered" };
-    }
-    
-    const newUser = { name, email, password };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    return { success: true };
-  }
-
-  // Verify user credentials from localStorage for demo purposes
-  function verifyUserCredentials(email, password) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => u.email === email && u.password === password);
-    return user 
-      ? { success: true, user }
-      : { success: false, error: "Invalid email or password" };
-  }
-
-  async function handleSignup() {
-    const name = document.getElementById("signupName").value.trim();
-    const email = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value.trim();
-    const messageEl = document.getElementById("signupMessage");
-
-    // Simple validation
-    if (!name || !email || !password) {
-      showMessage(messageEl, "Please fill in all fields", "error");
-      return;
-    }
-
-    if (DEMO_MODE) {
-      // Demo mode using localStorage
-      const result = storeUserData(name, email, password);
-      if (result.success) {
-        showMessage(messageEl, "Registration successful! You can now login.", "success");
-        // Auto-fill the login form with the new credentials
-        document.getElementById("loginEmail").value = email;
-        document.getElementById("loginPassword").value = password;
-        // Clear signup form
-        document.getElementById("signupName").value = "";
-        document.getElementById("signupEmail").value = "";
-        document.getElementById("signupPassword").value = "";
-        // Show login after 2 seconds
-        setTimeout(showLogin, 2000);
-      } else {
-        showMessage(messageEl, result.error || "Signup failed. Please try again.", "error");
-      }
-    } else {
-      // Real API mode
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `action=signup&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          showMessage(messageEl, "Registration successful! You can now login.", "success");
-          // Auto-fill the login form with the new credentials
-          document.getElementById("loginEmail").value = email;
-          document.getElementById("loginPassword").value = password;
-          // Clear signup form
-          document.getElementById("signupName").value = "";
-          document.getElementById("signupEmail").value = "";
-          document.getElementById("signupPassword").value = "";
-          // Show login after 2 seconds
-          setTimeout(showLogin, 2000);
-        } else {
-          showMessage(messageEl, result.error || "Signup failed. Please try again.", "error");
-        }
-      } catch (error) {
-        showMessage(messageEl, "Network error. Please check your connection and try again.", "error");
-      }
-    }
-  }
-
-  async function handleLogin() {
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value.trim();
-    const messageEl = document.getElementById("loginMessage");
-
-    if (!email || !password) {
-      showMessage(messageEl, "Please enter both email and password", "error");
-      return;
-    }
-
-    if (DEMO_MODE) {
-      // Demo mode using localStorage
-      const result = verifyUserCredentials(email, password);
-      if (result.success) {
-        showMessage(messageEl, "Login successful! Redirecting...", "success");
-        // Store current user in session
-        sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-        // Redirect to menu.html after 1.5 seconds
-        setTimeout(() => {
-          window.location.href = "menu.html";
-        }, 1500);
-      } else {
-        showMessage(messageEl, result.error || "Invalid email or password", "error");
-      }
-    } else {
-      // Real API mode
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          showMessage(messageEl, "Login successful! Redirecting...", "success");
-          // Store current user in session
-          sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-          // Redirect to menu.html after 1.5 seconds
-          setTimeout(() => {
-            window.location.href = "menu.html";
-          }, 1500);
-        } else {
-          showMessage(messageEl, result.error || "Invalid email or password", "error");
-        }
-      } catch (error) {
-        showMessage(messageEl, "Network error. Please try again.", "error");
-      }
-    }
-  }
-
-  function showMessage(element, message, type) {
-    element.textContent = message;
-    element.className = type;
-    element.style.display = "block";
-  }
-
-  // For demo purposes - clear any existing demo data when page loads
-  if (DEMO_MODE && !localStorage.getItem('demoInitialized')) {
-    localStorage.removeItem('users');
-    localStorage.setItem('demoInitialized', 'true');
-  }
-</script>
+<!-- [Keep all your existing HTML and JavaScript exactly the same] -->
 
 </body>
 </html>
