@@ -286,9 +286,9 @@
     const res = verifyUser(email, password);
     if (res.success) {
       sessionStorage.setItem("currentUser", JSON.stringify(res.user));
-      showMessage(message, "Login successful. Redirecting...", "success");
+      showMessage(message, "Login successful. Redirecting to booking...", "success");
       setTimeout(() => {
-        window.location.href = "https://sites.google.com/view/mycafemenu/home?authuser=0";
+        window.location.href = "booking.html";  // Changed to redirect to booking.html
       }, 1500);
     } else {
       showMessage(message, res.error, "error");
