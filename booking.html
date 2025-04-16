@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MyCafe Menu</title>
   <style>
-     body {
+    body {
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 20px;
@@ -23,7 +23,7 @@
       gap: 20px;
       max-width: 1200px;
       margin: 0 auto;
-      padding-bottom: 200px; /* Added space at bottom */
+      padding-bottom: 100px;
     }
 
     .menu-category {
@@ -33,7 +33,7 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px; /* Added space between categories */
+      margin-bottom: 20px;
     }
 
     h2 {
@@ -75,7 +75,7 @@
 
     .cart-toggle-btn {
       position: fixed;
-      bottom: 20px; /* Adjusted position */
+      bottom: 20px;
       right: 20px;
       background-color: #f77f00;
       color: white;
@@ -86,26 +86,64 @@
       cursor: pointer;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .cart-container {
       position: fixed;
-      bottom: -100%; /* Start hidden below screen */
-      left: 0;
-      right: 0;
+      bottom: 0;
+      right: 20px;
+      width: 350px;
       background: white;
-      padding: 15px;
-      border-top: 2px solid #eee;
+      border-radius: 10px 10px 0 0;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
       z-index: 1000;
-      max-height: 50vh;
-      overflow-y: auto;
-      transition: bottom 0.3s ease; /* Smooth animation */
+      transition: all 0.3s ease;
+      max-height: 70vh;
+      overflow: hidden;
     }
 
-    .cart-container.show {
-      bottom: 0; /* Show by moving up */
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: #f77f00;
+      color: white;
+      cursor: pointer;
+      border-radius: 10px 10px 0 0;
     }
+
+    .cart-header h2 {
+      color: white;
+      margin: 0;
+      border: none;
+    }
+
+    .toggle-arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .cart-content {
+      padding: 15px;
+      max-height: calc(70vh - 100px);
+      overflow-y: auto;
+    }
+
+    .cart-container.collapsed {
+      height: 60px;
+    }
+
+    .cart-container.collapsed .cart-content {
+      display: none;
+    }
+
+    .cart-container.collapsed .toggle-arrow {
+      transform: rotate(180deg);
+    }
+
     .cart-item {
       display: flex;
       justify-content: space-between;
@@ -152,12 +190,18 @@
 
     @media (max-width: 768px) {
       .menu-container {
-        padding-bottom: 250px; /* More space on mobile */
+        padding-bottom: 150px;
       }
       
       .menu-category {
-        min-width: calc(100% - 40px); /* Better mobile width */
-        margin: 0 20px 20px 20px; /* Consistent margins */
+        min-width: calc(100% - 40px);
+        margin: 0 20px 20px 20px;
+      }
+      
+      .cart-container {
+        width: calc(100% - 40px);
+        right: 20px;
+        left: 20px;
       }
       
       .cart-toggle-btn {
@@ -172,7 +216,12 @@
 <body>
   <h1>MyCafe Menu</h1>
 
-  <button class="cart-toggle-btn" onclick="toggleCart()">Show Cart (<span id="cart-count">0</span>)</button>
+  <button class="cart-toggle-btn" onclick="toggleCart()">
+    <span id="cart-count">0</span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+  </button>
 
   <div class="menu-container">
     <!-- Cupcakes -->
@@ -415,15 +464,23 @@
       </div>
     </div>
   </div>
- <div class="cart-container" id="cart-container">
-    <h2>Your Cart</h2>
-    <div id="cart-items"></div>
-    <div class="cart-total">
-      <div>Subtotal: RM<span id="subtotal">0.00</span></div>
-      <div>Delivery Fee: RM5.00</div>
-      <div>Total: RM<span id="total">5.00</span></div>
+
+  <div class="cart-container" id="cart-container">
+    <div class="cart-header" onclick="toggleCartCollapse()">
+      <h2>Your Cart (<span id="cart-header-count">0</span>)</h2>
+      <svg class="toggle-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+      </svg>
     </div>
-    <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    <div class="cart-content">
+      <div id="cart-items"></div>
+      <div class="cart-total">
+        <div>Subtotal: RM<span id="subtotal">0.00</span></div>
+        <div>Delivery Fee: RM5.00</div>
+        <div>Total: RM<span id="total">5.00</span></div>
+      </div>
+      <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    </div>
   </div>
 
   <script>
@@ -432,15 +489,24 @@
     const subtotalEl = document.getElementById('subtotal');
     const totalEl = document.getElementById('total');
     const cartCountEl = document.getElementById('cart-count');
+    const cartHeaderCountEl = document.getElementById('cart-header-count');
     const deliveryFee = 5.00;
     const cartContainer = document.getElementById('cart-container');
+    let isCartVisible = false;
+    let isCartCollapsed = false;
 
     function toggleCart() {
-      if (cartContainer.style.display === 'none' || cartContainer.style.display === '') {
-        cartContainer.style.display = 'block';
+      isCartVisible = !isCartVisible;
+      if (isCartVisible) {
+        cartContainer.style.bottom = '0';
       } else {
-        cartContainer.style.display = 'none';
+        cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
       }
+    }
+
+    function toggleCartCollapse() {
+      isCartCollapsed = !isCartCollapsed;
+      cartContainer.classList.toggle('collapsed', isCartCollapsed);
     }
 
     document.querySelectorAll('.add-to-cart').forEach(button => {
@@ -456,6 +522,11 @@
         }
 
         updateCart();
+        
+        // Auto-show cart when adding items
+        if (!isCartVisible) {
+          toggleCart();
+        }
       });
     });
 
@@ -489,6 +560,7 @@
       subtotalEl.textContent = subtotal.toFixed(2);
       totalEl.textContent = (subtotal + deliveryFee).toFixed(2);
       cartCountEl.textContent = itemCount;
+      cartHeaderCountEl.textContent = itemCount;
     }
 
     function changeQuantity(name, change) {
@@ -521,11 +593,10 @@
       window.location.href = "payment.html";
     }
 
-    // Initialize cart hidden
-    cartContainer.style.display = 'none';
+    // Initialize
     updateCart();
-    
+    // Start with cart hidden
+    cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
   </script>
 </body>
 </html>
- 
