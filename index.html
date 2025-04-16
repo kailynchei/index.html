@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login / Signup</title>
   <style>
     :root {
@@ -23,32 +23,28 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--text-color);
       line-height: 1.6;
+      background-color: var(--light-gray);
+      background: url('https://cdn.uniacco.com/blog/wp-content/uploads/2021/02/19060507/andy-falconer-dwQRixazu9I-unsplash-min.jpg') no-repeat center center/cover;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
       position: relative;
-      z-index: 0;
+      padding: 20px;
     }
 
     body::before {
-      content: "";
-      background-image: url('https://cdn.uniacco.com/blog/wp-content/uploads/2021/02/19060507/andy-falconer-dwQRixazu9I-unsplash-min.jpg');
-      background-size: cover;
-      background-position: center;
+      content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0.58; /* 58% transparency */
-      z-index: -1;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.58); /* 58% transparency overlay */
+      z-index: 0;
     }
 
     .container {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 420px;
       background: #fff;
@@ -67,12 +63,10 @@
       margin-bottom: 1.5rem;
       font-size: 1.8rem;
       text-align: center;
-      font-weight: 600;
     }
 
     .input-group {
       margin-bottom: 1.2rem;
-      position: relative;
     }
 
     input {
@@ -81,7 +75,6 @@
       border: 2px solid var(--border-color);
       border-radius: 8px;
       font-size: 1rem;
-      transition: all 0.3s;
       background-color: #f8f9fa;
     }
 
@@ -90,10 +83,6 @@
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
       background-color: #fff;
-    }
-
-    input::placeholder {
-      color: #adb5bd;
     }
 
     button {
@@ -115,10 +104,6 @@
       transform: translateY(-2px);
     }
 
-    button:active {
-      transform: translateY(0);
-    }
-
     .toggle-text {
       margin-top: 1.5rem;
       text-align: center;
@@ -129,18 +114,28 @@
       color: var(--primary-color);
       cursor: pointer;
       font-weight: 600;
-      text-decoration: none;
-      transition: color 0.3s;
     }
 
     .toggle-link:hover {
       color: var(--secondary-color);
-      text-decoration: underline;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
     }
 
     #message {
       margin-top: 1.2rem;
-      padding: 10px 15px;
+      padding: 10px;
       border-radius: 8px;
       text-align: center;
       font-size: 0.9rem;
@@ -159,19 +154,6 @@
       color: var(--success-color);
       border: 1px solid #d4edda;
       display: block;
-    }
-
-    .password-container {
-      position: relative;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #6c757d;
     }
 
     @media (max-width: 480px) {
@@ -197,7 +179,7 @@
     <span class="password-toggle" onclick="togglePassword('loginPassword')">👁️</span>
   </div>
   <button onclick="handleLogin()">Log In</button>
-  <p class="toggle-text">Don't have an account? <a class="toggle-link" onclick="showSignup()">Sign up</a></p>
+  <p class="toggle-text">Don't have an account? <span class="toggle-link" onclick="showSignup()">Sign up</span></p>
   <div id="loginMessage"></div>
 </div>
 
@@ -214,12 +196,11 @@
     <span class="password-toggle" onclick="togglePassword('signupPassword')">👁️</span>
   </div>
   <button onclick="handleSignup()">Sign Up</button>
-  <p class="toggle-text">Already have an account? <a class="toggle-link" onclick="showLogin()">Login</a></p>
+  <p class="toggle-text">Already have an account? <span class="toggle-link" onclick="showLogin()">Login</span></p>
   <div id="signupMessage"></div>
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbwiQ9g3iHqgk6DpryjTZ8tn2sEZZcW1mEbTaE6o0mX8_QyQ4eyBtiw66DbpXs8pKp4J8A/exec";
   const DEMO_MODE = true;
 
   function showSignup() {
@@ -246,124 +227,75 @@
     input.type = input.type === 'password' ? 'text' : 'password';
   }
 
+  function showMessage(el, message, type) {
+    el.textContent = message;
+    el.className = type;
+    el.style.display = "block";
+  }
+
   function storeUserData(name, email, password) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
     if (users.some(user => user.email === email)) {
       return { success: false, error: "Email already registered" };
     }
-    const newUser = { name, email, password };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
+    users.push({ name, email, password });
+    localStorage.setItem("users", JSON.stringify(users));
     return { success: true };
   }
 
-  function verifyUserCredentials(email, password) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+  function verifyUser(email, password) {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
     const user = users.find(u => u.email === email && u.password === password);
-    return user 
-      ? { success: true, user }
-      : { success: false, error: "Invalid email or password" };
+    return user ? { success: true, user } : { success: false, error: "Invalid credentials" };
   }
 
-  async function handleSignup() {
+  function handleSignup() {
     const name = document.getElementById("signupName").value.trim();
     const email = document.getElementById("signupEmail").value.trim();
     const password = document.getElementById("signupPassword").value.trim();
-    const messageEl = document.getElementById("signupMessage");
+    const message = document.getElementById("signupMessage");
 
     if (!name || !email || !password) {
-      showMessage(messageEl, "Please fill in all fields", "error");
+      showMessage(message, "All fields are required", "error");
       return;
     }
 
-    if (DEMO_MODE) {
-      const result = storeUserData(name, email, password);
-      if (result.success) {
-        showMessage(messageEl, "Registration successful! You can now login.", "success");
-        document.getElementById("loginEmail").value = email;
-        document.getElementById("loginPassword").value = password;
-        document.getElementById("signupName").value = "";
-        document.getElementById("signupEmail").value = "";
-        document.getElementById("signupPassword").value = "";
-        setTimeout(showLogin, 2000);
-      } else {
-        showMessage(messageEl, result.error || "Signup failed. Please try again.", "error");
-      }
+    const result = storeUserData(name, email, password);
+    if (result.success) {
+      showMessage(message, "Signup successful. Redirecting to login...", "success");
+      document.getElementById("loginEmail").value = email;
+      document.getElementById("loginPassword").value = password;
+      setTimeout(() => {
+        showLogin();
+      }, 2000);
     } else {
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `action=signup&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-        });
-        const result = await response.json();
-        if (result.success) {
-          showMessage(messageEl, "Registration successful! You can now login.", "success");
-          document.getElementById("loginEmail").value = email;
-          document.getElementById("loginPassword").value = password;
-          document.getElementById("signupName").value = "";
-          document.getElementById("signupEmail").value = "";
-          document.getElementById("signupPassword").value = "";
-          setTimeout(showLogin, 2000);
-        } else {
-          showMessage(messageEl, result.error || "Signup failed. Please try again.", "error");
-        }
-      } catch (error) {
-        showMessage(messageEl, "Network error. Please check your connection and try again.", "error");
-      }
+      showMessage(message, result.error, "error");
     }
   }
 
-  async function handleLogin() {
+  function handleLogin() {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
-    const messageEl = document.getElementById("loginMessage");
+    const message = document.getElementById("loginMessage");
 
     if (!email || !password) {
-      showMessage(messageEl, "Please enter both email and password", "error");
+      showMessage(message, "Please enter both fields", "error");
       return;
     }
 
-    if (DEMO_MODE) {
-      const result = verifyUserCredentials(email, password);
-      if (result.success) {
-        showMessage(messageEl, "Login successful! Redirecting...", "success");
-        sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-        setTimeout(() => {
-          window.location.href = "menu.html";
-        }, 1500);
-      } else {
-        showMessage(messageEl, result.error || "Invalid email or password", "error");
-      }
+    const res = verifyUser(email, password);
+    if (res.success) {
+      sessionStorage.setItem("currentUser", JSON.stringify(res.user));
+      showMessage(message, "Login successful. Redirecting...", "success");
+      setTimeout(() => {
+        window.location.href = "https://sites.google.com/view/mycafemenu/home?authuser=0";
+      }, 1500);
     } else {
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-        });
-        const result = await response.json();
-        if (result.success) {
-          showMessage(messageEl, "Login successful! Redirecting...", "success");
-          sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-          setTimeout(() => {
-            window.location.href = "menu.html";
-          }, 1500);
-        } else {
-          showMessage(messageEl, result.error || "Invalid email or password", "error");
-        }
-      } catch (error) {
-        showMessage(messageEl, "Network error. Please try again.", "error");
-      }
+      showMessage(message, res.error, "error");
     }
   }
 
-  function showMessage(element, message, type) {
-    element.textContent = message;
-    element.className = type;
-    element.style.display = "block";
-  }
-
+  // Clean old users (optional)
   if (DEMO_MODE && !localStorage.getItem('demoInitialized')) {
     localStorage.removeItem('users');
     localStorage.setItem('demoInitialized', 'true');
