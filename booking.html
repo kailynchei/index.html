@@ -124,7 +124,7 @@
 
     .toggle-arrow {
       transition: transform 0.3s ease;
-      transform: rotate(0deg); 
+      transform: rotate(180deg); 
     }
 
     .cart-content {
@@ -134,7 +134,7 @@
     }
 
     .cart-container.collapsed .toggle-arrow {
-      transform: rotate(180deg);
+      transform: rotate(0deg);
     }
 
     .cart-container.collapsed .cart-content {
@@ -217,11 +217,9 @@
 <body>
   <h1>MyCafe Menu</h1>
 
-  <button class="cart-toggle-btn" onclick="toggleCart()">
-    <span id="cart-count">0</span>
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-    </svg>
+  <svg class="toggle-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+</svg>
   </button>
 
   <div class="menu-container">
@@ -467,12 +465,12 @@
   </div>
 
   <div class="cart-container" id="cart-container">
-    <div class="cart-header" onclick="toggleCartCollapse()">
-      <h2>Your Cart (<span id="cart-header-count">0</span>)</h2>
-      <svg class="toggle-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
-      </svg>
-    </div>
+  <div class="cart-header" onclick="toggleCartCollapse()">
+    <h2>Your Cart (<span id="cart-header-count">0</span>)</h2>
+    <svg class="toggle-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+    </svg>
+  </div>
     <div class="cart-content">
       <div id="cart-items"></div>
       <div class="cart-total">
