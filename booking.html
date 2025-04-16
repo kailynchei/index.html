@@ -517,12 +517,13 @@
       orderSummary += `\nTotal: RM${totalEl.textContent}`;
 
       alert(orderSummary);
-      // In a real app, you would send this to your server
+      window.location.href = "payment.html";
     }
 
     // Initialize cart hidden
     cartContainer.style.display = 'none';
     updateCart();
+    
   </script>
 </body>
 </html>
