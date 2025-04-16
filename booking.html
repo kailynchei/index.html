@@ -124,6 +124,7 @@
 
     .toggle-arrow {
       transition: transform 0.3s ease;
+      transform: rotate(0deg); 
     }
 
     .cart-content {
@@ -132,8 +133,8 @@
       overflow-y: auto;
     }
 
-    .cart-container.collapsed {
-      height: 60px;
+    .cart-container.collapsed .toggle-arrow {
+      transform: rotate(180deg);
     }
 
     .cart-container.collapsed .cart-content {
