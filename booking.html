@@ -141,10 +141,6 @@
       display: none;
     }
 
-    .cart-container.collapsed .toggle-arrow {
-      transform: rotate(180deg);
-    }
-
     .cart-item {
       display: flex;
       justify-content: space-between;
@@ -217,18 +213,21 @@
 <body>
   <h1>MyCafe Menu</h1>
 
-  <svg class="toggle-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
-</svg>
+  <button class="cart-toggle-btn" onclick="toggleCart()">
+    <span id="cart-count">0</span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
   </button>
 
+  <!-- Your menu items here (same as before) -->
   <div class="menu-container">
     <!-- Cupcakes -->
     <div class="menu-category">
       <h2>Cupcakes</h2>
       <div class="menu-item">
         <div>
-		<img src="https://i.pinimg.com/474x/15/be/cc/15becce03c1381624a9ebcf9231e5f01.jpg" alt="Chocolate Cupcake" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+          <img src="https://i.pinimg.com/474x/15/be/cc/15becce03c1381624a9ebcf9231e5f01.jpg" alt="Chocolate Cupcake" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
           <div class="item-name">Chocolate Cupcake</div>
         </div>
         <div class="item-price">RM5.99</div>
@@ -501,6 +500,14 @@
       <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
     </svg>
   </div>
+
+  <div class="cart-container" id="cart-container">
+    <div class="cart-header" onclick="toggleCartCollapse()">
+      <h2>Your Cart (<span id="cart-header-count">0</span>)</h2>
+      <svg class="toggle-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+      </svg>
+    </div>
     <div class="cart-content">
       <div id="cart-items"></div>
       <div class="cart-total">
@@ -529,7 +536,7 @@
       if (isCartVisible) {
         cartContainer.style.bottom = '0';
       } else {
-        cartContainer.style.bottom = -${cartContainer.offsetHeight}px;
+        cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
       }
     }
 
@@ -611,12 +618,12 @@
 
       let orderSummary = 'Order Summary:\n\n';
       cart.forEach(item => {
-        orderSummary += ${item.name} × ${item.quantity} = RM${(item.price * item.quantity).toFixed(2)}\n;
+        orderSummary += `${item.name} × ${item.quantity} = RM${(item.price * item.quantity).toFixed(2)}\n`;
       });
 
-      orderSummary += \nSubtotal: RM${subtotalEl.textContent};
-      orderSummary += \nDelivery Fee: RM${deliveryFee.toFixed(2)};
-      orderSummary += \nTotal: RM${totalEl.textContent};
+      orderSummary += `\nSubtotal: RM${subtotalEl.textContent}`;
+      orderSummary += `\nDelivery Fee: RM${deliveryFee.toFixed(2)}`;
+      orderSummary += `\nTotal: RM${totalEl.textContent}`;
 
       alert(orderSummary);
       window.location.href = "payment.html";
@@ -625,7 +632,7 @@
     // Initialize
     updateCart();
     // Start with cart hidden
-    cartContainer.style.bottom = -${cartContainer.offsetHeight}px;
+    cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
   </script>
 </body>
 </html>
