@@ -536,7 +536,7 @@
       if (isCartVisible) {
         cartContainer.style.bottom = '0';
       } else {
-        cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
+        cartContainer.style.bottom = -${cartContainer.offsetHeight}px;
       }
     }
 
@@ -610,6 +610,8 @@
       }
     }
 
+	
+
     function checkout() {
       if (cart.length === 0) {
         alert('Your cart is empty!');
@@ -618,21 +620,70 @@
 
       let orderSummary = 'Order Summary:\n\n';
       cart.forEach(item => {
-        orderSummary += `${item.name} × ${item.quantity} = RM${(item.price * item.quantity).toFixed(2)}\n`;
+        orderSummary += ${item.name} × ${item.quantity} = RM${(item.price * item.quantity).toFixed(2)}\n;
       });
 
-      orderSummary += `\nSubtotal: RM${subtotalEl.textContent}`;
-      orderSummary += `\nDelivery Fee: RM${deliveryFee.toFixed(2)}`;
-      orderSummary += `\nTotal: RM${totalEl.textContent}`;
+      orderSummary += \nSubtotal: RM${subtotalEl.textContent};
+      orderSummary += \nDelivery Fee: RM${deliveryFee.toFixed(2)};
+      orderSummary += \nTotal: RM${totalEl.textContent};
 
       alert(orderSummary);
       window.location.href = "payment.html";
     }
 
+	
+function calculateDiscountedPrice(price) {
+    let discount = 0;
+
+    if (price >= 100) {
+        discount = 0.10;
+    } else if (price > 80) {
+        discount = 0.05;
+    }
+
+    return price - (price * discount);
+}
+
+function updateCart() {
+    cartItemsEl.innerHTML = '';
+    let subtotal = 0;
+    let itemCount = 0;
+
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        itemCount += item.quantity;
+
+        const discountedTotal = calculateDiscountedPrice(itemTotal);
+
+        const cartItemEl = document.createElement('div');
+        cartItemEl.className = 'cart-item';
+        cartItemEl.innerHTML = `
+          <div>
+            <div>${item.name}</div>
+            <div>RM${item.price.toFixed(2)} × ${item.quantity}</div>
+          </div>
+          <div class="quantity-controls">
+            <button class="quantity-btn" onclick="changeQuantity('${item.name}', -1)">-</button>
+            <span>${item.quantity}</span>
+            <button class="quantity-btn" onclick="changeQuantity('${item.name}', 1)">+</button>
+            <span>RM${discountedTotal.toFixed(2)}</span>
+          </div>
+        `;
+        cartItemsEl.appendChild(cartItemEl);
+    });
+
+    const discountedSubtotal = calculateDiscountedPrice(subtotal);
+    subtotalEl.textContent = discountedSubtotal.toFixed(2);
+    totalEl.textContent = (discountedSubtotal + deliveryFee).toFixed(2);
+    cartCountEl.textContent = itemCount;
+    cartHeaderCountEl.textContent = itemCount;
+}
+
     // Initialize
     updateCart();
     // Start with cart hidden
-    cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
+    cartContainer.style.bottom = -${cartContainer.offsetHeight}px;
   </script>
 </body>
 </html>
