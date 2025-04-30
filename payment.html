@@ -1,15 +1,65 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    body {
+      font-family: 'Times New Roman', serif;
+      background-color: #ccccff;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    fieldset {
+      border-radius: 5px;
+      padding: 15px;
+      border: 1px solid #999;
+    }
+    legend {
+	  font-family: 'Lucida Handwriting', cursive;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    h3 {
+	  font-family: 'Times New Roman', serif;
+      margin-top: 0;
+      color: #444;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #555;
+    }
+    .w3-button {
+      background-color: #6666ff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-top: 20px;
+      border: none;
+      cursor: pointer;
+    }
+    .w3-button:hover {
+      background-color:  #9999ff;
+    }
+  </style>
+</head
+
 <body>
 
 <form class="w3-container">
     <fieldset>
     <legend>PAYMENT METHOD</legend>
 	
-	<br>Preferred payment method:<br>
+	<br><h3><b>Preferred payment method:</b></h3><br>
 	<input type="radio" name="payment method" value="Cash on Delivery" checked> Cash on Delivery
 	
-    <input type="radio" name="payment method" value="Online Banking/Card"> Online Banking/Card<br>
+    <input type="radio" name="payment method" value="Online Banking/Card"> Online Banking/Card<br><br>
 	<input type="checkbox" name=“CreditCardCb" value="CreditCard">Credit Card<br>
 	<input type="checkbox" name=“DebitCardCb" value="DebitCard">Debit Card<br>
 	<input type="checkbox" name=“OnlineBankingCb" value="OnlineBanking">Online Banking<br>
