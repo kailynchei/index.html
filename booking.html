@@ -185,6 +185,23 @@
       cursor: pointer;
     }
 
+    .original-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 0.9em;
+      margin-right: 5px;
+    }
+
+    .discounted-price {
+      color: #e63946;
+      font-weight: bold;
+    }
+
+    .discount-info {
+      color: #4bb543;
+      font-weight: bold;
+    }
+
     @media (max-width: 768px) {
       .menu-container {
         padding-bottom: 150px;
@@ -220,7 +237,6 @@
     </svg>
   </button>
 
-  <!-- Your menu items here (same as before) -->
   <div class="menu-container">
     <!-- Cupcakes -->
     <div class="menu-category">
@@ -504,11 +520,14 @@
       <div id="cart-items"></div>
       <div class="cart-total">
         <div>Subtotal: RM<span id="subtotal">0.00</span></div>
-        <div id="discount-info" style="display: none;">
-          Discount (<span id="discount-percentage">0%</span>): -RM<span id="discount-amount">0.00</span>
+        <div id="discount-info" class="discount-info" style="display: none;">
+          Discount: <span id="discount-percentage">0%</span> off
         </div>
         <div>Delivery Fee: RM5.00</div>
-        <div>Total: RM<span id="total">5.00</span></div>
+        <div>Total: 
+          <span id="original-total" class="original-price" style="display: none;"></span>
+          <span id="final-total" class="discounted-price">5.00</span>
+        </div>
       </div>
       <button class="checkout-btn" onclick="checkout()">Checkout</button>
     </div>
@@ -518,16 +537,30 @@
     let cart = [];
     const cartItemsEl = document.getElementById('cart-items');
     const subtotalEl = document.getElementById('subtotal');
-    const totalEl = document.getElementById('total');
+    const finalTotalEl = document.getElementById('final-total');
+    const originalTotalEl = document.getElementById('original-total');
     const cartCountEl = document.getElementById('cart-count');
     const cartHeaderCountEl = document.getElementById('cart-header-count');
     const discountInfoEl = document.getElementById('discount-info');
     const discountPercentageEl = document.getElementById('discount-percentage');
-    const discountAmountEl = document.getElementById('discount-amount');
     const deliveryFee = 5.00;
     const cartContainer = document.getElementById('cart-container');
     let isCartVisible = false;
     let isCartCollapsed = false;
+
+    function toggleCart() {
+      isCartVisible = !isCartVisible;
+      if (isCartVisible) {
+        cartContainer.style.bottom = '0';
+      } else {
+        cartContainer.style.bottom = `-${cartContainer.offsetHeight}px`;
+      }
+    }
+
+    function toggleCartCollapse() {
+      isCartCollapsed = !isCartCollapsed;
+      cartContainer.classList.toggle('collapsed', isCartCollapsed);
+    }
 
     function calculateDiscount(subtotal) {
       if (subtotal >= 100) {
@@ -537,6 +570,27 @@
       }
       return { percentage: 0, amount: 0 };
     }
+
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', () => {
+        const name = button.getAttribute('data-name');
+        const price = parseFloat(button.getAttribute('data-price'));
+
+        const existingItem = cart.find(item => item.name === name);
+        if (existingItem) {
+          existingItem.quantity++;
+        } else {
+          cart.push({ name, price, quantity: 1 });
+        }
+
+        updateCart();
+        
+        // Auto-show cart when adding items
+        if (!isCartVisible) {
+          toggleCart();
+        }
+      });
+    });
 
     function updateCart() {
       cartItemsEl.innerHTML = '';
@@ -566,26 +620,67 @@
       });
 
       const discount = calculateDiscount(subtotal);
-      const discountedSubtotal = subtotal - discount.amount;
-      const total = discountedSubtotal + deliveryFee;
+      const totalBeforeDiscount = subtotal + deliveryFee;
+      const finalTotal = totalBeforeDiscount - discount.amount;
 
       subtotalEl.textContent = subtotal.toFixed(2);
       
       if (discount.percentage > 0) {
         discountInfoEl.style.display = 'block';
         discountPercentageEl.textContent = `${discount.percentage}%`;
-        discountAmountEl.textContent = discount.amount.toFixed(2);
+        originalTotalEl.style.display = 'inline';
+        originalTotalEl.textContent = `RM${totalBeforeDiscount.toFixed(2)}`;
+        finalTotalEl.textContent = `RM${finalTotal.toFixed(2)}`;
       } else {
         discountInfoEl.style.display = 'none';
+        originalTotalEl.style.display = 'none';
+        finalTotalEl.textContent = totalBeforeDiscount.toFixed(2);
       }
       
-      totalEl.textContent = total.toFixed(2);
       cartCountEl.textContent = itemCount;
       cartHeaderCountEl.textContent = itemCount;
     }
 
-    // Rest of your JavaScript remains the same (toggleCart, toggleCartCollapse, 
-    // add-to-cart event listeners, changeQuantity, checkout functions)
+    function changeQuantity(name, change) {
+      const item = cart.find(item => item.name === name);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+          cart = cart.filter(i => i.name !== name);
+        }
+        updateCart();
+      }
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      let orderSummary = 'Order Summary:\n\n';
+      cart.forEach(item => {
+        orderSummary += `${item.name} × ${item.quantity} = RM${(item.price * item.quantity).toFixed(2)}\n`;
+      });
+
+      const subtotal = parseFloat(subtotalEl.textContent);
+      const discount = calculateDiscount(subtotal);
+      const totalBeforeDiscount = subtotal + deliveryFee;
+      const finalTotal = totalBeforeDiscount - discount.amount;
+
+      orderSummary += `\nSubtotal: RM${subtotal.toFixed(2)}`;
+      
+      if (discount.percentage > 0) {
+        orderSummary += `\nDiscount: ${discount.percentage}% off (-RM${discount.amount.toFixed(2)})`;
+        orderSummary += `\nOriginal Total: RM${totalBeforeDiscount.toFixed(2)}`;
+      }
+      
+      orderSummary += `\nDelivery Fee: RM${deliveryFee.toFixed(2)}`;
+      orderSummary += `\nFinal Total: RM${finalTotal.toFixed(2)}`;
+
+      alert(orderSummary);
+      window.location.href = "payment.html";
+    }
 
     // Initialize
     updateCart();
